@@ -1,10 +1,12 @@
 # depslib dependency file v1.0
-1620984764 source:c:\users\justk\desktop\sfml projektai\tetris c++\main.cpp
+1621023009 source:c:\users\justk\desktop\sfml projektai\tetris c++\main.cpp
 	<SFML/Graphics.hpp>
-	<fstream>
 	<iostream>
+	<sstream>
 	<algorithm>
 	<time.h>
+	<string>
+	<cmath>
 
 1620826747 d:\libraries\sfml-2.5.1 codeblocks\include\sfml\graphics.hpp
 	<SFML/Window.hpp>

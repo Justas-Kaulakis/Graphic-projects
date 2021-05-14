@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
-#include <fstream>
 #include <iostream>
+#include <sstream>    /// Skaito ir raso i stringstream objekta. Is jo gali gauti std::string
 #include <algorithm>
 #include <time.h>
-
-
+#include <string>
+#include <cmath>
 
 
 ///  Apacioj (Shapes) laikau kvadratelius, is kuriu susidaro kiekviena forma.
@@ -30,9 +30,32 @@ int Shapes[7][4] = {
 sf::Vector2i a[4], b[4];    /// Cia laikysiu judancios formos visu 4-iu kvadrateliu (x,y) taskus
 
 
+template<typename T>
+std::string Num_to_string(T &num) {
+    std::stringstream ss;
+    ss << num;
+    return ss.str();
+}
+
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(tileSize * 10, tileSize * 20), "Tetris!");
+
+    /// ------------ TEKSTAS EKRANE --------------------------------
+    sf::Font font;
+    font.loadFromFile("Roboto-font.ttf");
+
+    sf::Text text;
+
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setFillColor(sf::Color::Black);
+
+    sf::Text time_text = text, fps_text = text;
+
+    time_text.setPosition(16.f, 6.f);
+    fps_text.setPosition(150.f, 6.f);
 
     ///  ----------- UZKRAUNAMA TEKSTURA ---------------------------
     sf::Texture t;
@@ -50,11 +73,15 @@ int main()
 
     int dx = 0;
     bool turn = false;
-    float timer;            /// zaidime praejes laikas sekundemis
+    // Laikas
+    float lastTime = 0.f;
+    float timer = 0.f;            /// zaidime praejes laikas sekundemis
     float period = 1.f;     /// laikas sekundemis, po kurio detale pajuda zemyn
+    float fps;              /// Kadrai per sekunde
 
     /// Suskaiciuoju atsitiktinos formos (x,y) taskus
-    int n = rand() % 7;
+    //int n = rand() % 7;
+    int n = 4;
     for(int i = 0; i < 4; i++){
         a[i].x = Shapes[n][i] % 2;  /// Gauna x verte
         a[i].y = Shapes[n][i] / 2;  /// Gauna y verte
@@ -63,12 +90,19 @@ int main()
 
     /// ------------ ZAIDIMO CIKLAS -------------------------
     sf::Clock clock;
+    sf::Clock fps_clock;
     while (window.isOpen())
     {
-        float time = clock.getElapsedTime().asSeconds();
-        clock.restart();
+        /// ------------- LAIKO SKAICIAVIMAI --------------------------
+        float time = clock.restart().asSeconds();
         timer += time;
 
+        float currentTime = fps_clock.getElapsedTime().asSeconds();
+        fps = std::floor(std::abs(1.f / (currentTime - lastTime)));
+        lastTime = currentTime;
+
+        time_text.setString(Num_to_string(timer));
+        fps_text.setString(Num_to_string(fps));
         /// ---------- MYGTUKU TIKRINIMAS -----------------------------
         sf::Event event;
         while (window.pollEvent(event))
@@ -92,7 +126,7 @@ int main()
         for(int i = 0; i < 4; i++) a[i].x += dx;
 
         /// ------- DETALES SUKIMASIS ------------------------------------------------------------
-        if(turn == true) {
+        if(turn == true && n != 4) {
             sf::Vector2i p = a[1];   /// Taskas, apie kuri suksis detale
 
             for(int i = 0; i < 4; i++) {
@@ -103,7 +137,7 @@ int main()
             }
         }
 
-
+        for(long int i = 0; i < 10000000; i++);
 
         /// PIESIMAS
         window.clear(sf::Color::White);
@@ -111,6 +145,8 @@ int main()
             s.setPosition((float)(a[i].x * tileSize), (float)(a[i].y * tileSize));
             window.draw(s);
         }
+        window.draw(time_text);
+        window.draw(fps_text);
         window.display();
 
         /// ISVALYMAS

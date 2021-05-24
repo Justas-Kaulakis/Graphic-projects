@@ -45,6 +45,8 @@
 			<Add directory="D:/libraries/SFML-2.5.1 CodeBlocks/include" />
 		</Compiler>
 		<Linker>
+			<Add option="-static-libgcc" />
+			<Add option="-static-libc++" />
 			<Add directory="D:/libraries/SFML-2.5.1 CodeBlocks/lib" />
 		</Linker>
 		<Unit filename="main.cpp" />
